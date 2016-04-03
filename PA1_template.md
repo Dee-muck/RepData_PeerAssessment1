@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 ##Introduction
 This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
 
@@ -23,10 +18,12 @@ Dataset Available here:https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Fac
 * *interval*: Identifier for the 5-minute interval in which measurement was taken
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 knitr::opts_chunk$set(fig.path='figures/')
 ```
-```{r}
+
+```r
 ##Unzipping file fromm the forked repository
 if(!file.exists('activity.csv')){
         unzip('activity.zip')
@@ -40,7 +37,8 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
 
 ## What is mean total number of steps taken per day?
 #### 1. Make a histogram of the total number of steps taken each day
-```{r}
+
+```r
 Total_steps_day <- tapply(activity_data$steps, activity_data$date,sum)
 
 ##Plotting the histogram (number of breaks was find by plotting several plots)
@@ -48,24 +46,38 @@ hist(Total_steps_day, breaks=10, col="violetred2",xlab="Number of steps",
      ylab="Frequency", main="Histogram of Number of Total Steps taken per day")
 ```
 
+![](figures/unnamed-chunk-3-1.png)
+
 ####2. Calculate and report the mean and median total number of steps taken per day
-```{r}
+
+```r
 Mean_tsd2 <- mean(Total_steps_day, na.rm = TRUE)
 Median_tsd2 <- median(Total_steps_day,na.rm = TRUE)
 ```
 Mean is:
-```{r}
+
+```r
 print(Mean_tsd2)
 ```
 
+```
+## [1] 10766.19
+```
+
 Median is:
-```{r}
+
+```r
 print(Median_tsd2)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 ####1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r}
+
+```r
 mean_steps <- tapply(activity_data$steps,activity_data$interval,
                     mean,na.rm=TRUE)
 plot(names(mean_steps), mean_steps , type="l", xlab="5 minutes intervals", 
@@ -74,8 +86,11 @@ plot(names(mean_steps), mean_steps , type="l", xlab="5 minutes intervals",
      col="blue")
 ```
 
+![](figures/unnamed-chunk-7-1.png)
+
 ###Plotting a little bit more beatiful plot ( with time at x-axis)
-```{r}
+
+```r
 ##Function to create x-axis
 intName <- function(interval) {
         if (as.numeric(interval) < 10) {
@@ -100,24 +115,37 @@ plot(yax, mean_steps, xlab="5 minutes intervals",
      col="blue")
 ```
 
+![](figures/unnamed-chunk-8-1.png)
+
 ####2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+
+```r
 #5-minutes interval with maximum steps taken
 max_steps_interval <- which.max(mean_steps)
 msi <- names(max_steps_interval)
 print(msi)
 ```
+
+```
+## [1] "835"
+```
 Which means that tome interval "8:35" is interval with maximum steps taken on average.
 
 ## Imputing missing values
 ####1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r}
+
+```r
 mis_val <- sum(is.na(activity_data$steps))
 ```
 Totla number of NAs presented:
-```{r}
+
+```r
 print(mis_val)
+```
+
+```
+## [1] 2304
 ```
 
 ####2.Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated.
@@ -125,7 +153,8 @@ print(mis_val)
 Lets fill the NA with average value for the corresponding 5-minute interval.
 
 ####3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r}
+
+```r
 Activity_data_filled <- activity_data
 
 for (i in 1:nrow(Activity_data_filled)){
@@ -137,25 +166,39 @@ for (i in 1:nrow(Activity_data_filled)){
 ```
 
 ####4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
-```{r}
+
+```r
 Total_steps_day_filled <- tapply(Activity_data_filled$steps, Activity_data_filled$date,sum)
 
 ##Plotting the histogram (number of breaks was find by plotting several plots)
 hist(Total_steps_day_filled, breaks=10, col="peachpuff",xlab="Number of steps", 
      ylab="Frequency", main="Histogram of Number of Total Steps taken per day, NA filled")
 ```
+
+![](figures/unnamed-chunk-13-1.png)
 Calculate and report the mean and median total number of steps taken per day on the imputed dataset
-```{r}
+
+```r
 Mean_tsd_filled<- mean(Total_steps_day_filled)
 Median_tsd_filled <- median(Total_steps_day_filled)
 ```
 Mean of the dataset with filled NAs is:
-```{r}
+
+```r
 print(Mean_tsd_filled)
 ```
+
+```
+## [1] 10766.19
+```
 Median of the dataset with filled NAs is:
-```{r}
+
+```r
 print(Median_tsd_filled)
+```
+
+```
+## [1] 10766.19
 ```
 Mean is the same, cause we used meanvalue of the intervals to substitute NA's. 
 Median became a bit higher and equal to Mean.
@@ -164,7 +207,8 @@ Median became a bit higher and equal to Mean.
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ####Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
-```{r}
+
+```r
 ##Adding column with type of the day
 Activity_data_filled$day_type <- weekdays(as.Date(Activity_data_filled$date))
 Activity_data_filled$day_type <- ifelse(Activity_data_filled$day_type %in% c("Saturday", "Sunday"),"weekend", "weekday")
@@ -181,8 +225,11 @@ names(mean_tsd_final) <- c("interval","day_type","steps")
 
 ####2.Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r}
+
+```r
 ##Plotting results
 library(lattice)
 xyplot(steps ~ interval | day_type, data = mean_tsd_final, layout = c(1, 2), type="l", xlab = "Interval", ylab = "Number of steps")
 ```
+
+![](figures/unnamed-chunk-18-1.png)
