@@ -19,9 +19,16 @@ Dataset Available here:https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Fac
 
 ## Loading and preprocessing the data
 
+
 ```r
-knitr::opts_chunk$set(fig.path='figures/')
+##Above all we set language preferences to English (to weekday function can produce correct results) and save current settings
+## In order to save my russian environment
+curr_locale <- Sys.getlocale("LC_TIME")
+
+## To set it in english
+Sys.setlocale("LC_TIME","en_US.UTF-8")
 ```
+
 
 ```r
 ##Unzipping file fromm the forked repository
@@ -46,7 +53,7 @@ hist(Total_steps_day, breaks=10, col="violetred2",xlab="Number of steps",
      ylab="Frequency", main="Histogram of Number of Total Steps taken per day")
 ```
 
-![](figures/unnamed-chunk-3-1.png)
+![](figures/unnamed-chunk-4-1.png)
 
 ####2. Calculate and report the mean and median total number of steps taken per day
 
@@ -56,19 +63,11 @@ Median_tsd2 <- median(Total_steps_day,na.rm = TRUE)
 ```
 Mean is:
 
-```r
-print(Mean_tsd2)
-```
-
 ```
 ## [1] 10766.19
 ```
 
 Median is:
-
-```r
-print(Median_tsd2)
-```
 
 ```
 ## [1] 10765
@@ -86,7 +85,7 @@ plot(names(mean_steps), mean_steps , type="l", xlab="5 minutes intervals",
      col="blue")
 ```
 
-![](figures/unnamed-chunk-7-1.png)
+![](figures/unnamed-chunk-8-1.png)
 
 ###Plotting a little bit more beatiful plot ( with time at x-axis)
 
@@ -115,7 +114,7 @@ plot(yax, mean_steps, xlab="5 minutes intervals",
      col="blue")
 ```
 
-![](figures/unnamed-chunk-8-1.png)
+![](figures/unnamed-chunk-9-1.png)
 
 ####2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -130,7 +129,7 @@ print(msi)
 ```
 ## [1] "835"
 ```
-Which means that tome interval "8:35" is interval with maximum steps taken on average.
+Which means that interval "8:35" is the interval with maximum steps taken on average.
 
 ## Imputing missing values
 ####1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
@@ -138,11 +137,7 @@ Which means that tome interval "8:35" is interval with maximum steps taken on av
 ```r
 mis_val <- sum(is.na(activity_data$steps))
 ```
-Totla number of NAs presented:
-
-```r
-print(mis_val)
-```
+Total number of NAs presented:
 
 ```
 ## [1] 2304
@@ -175,7 +170,7 @@ hist(Total_steps_day_filled, breaks=10, col="peachpuff",xlab="Number of steps",
      ylab="Frequency", main="Histogram of Number of Total Steps taken per day, NA filled")
 ```
 
-![](figures/unnamed-chunk-13-1.png)
+![](figures/unnamed-chunk-14-1.png)
 Calculate and report the mean and median total number of steps taken per day on the imputed dataset
 
 ```r
@@ -184,18 +179,10 @@ Median_tsd_filled <- median(Total_steps_day_filled)
 ```
 Mean of the dataset with filled NAs is:
 
-```r
-print(Mean_tsd_filled)
-```
-
 ```
 ## [1] 10766.19
 ```
 Median of the dataset with filled NAs is:
-
-```r
-print(Median_tsd_filled)
-```
 
 ```
 ## [1] 10766.19
@@ -214,7 +201,6 @@ Activity_data_filled$day_type <- weekdays(as.Date(Activity_data_filled$date))
 Activity_data_filled$day_type <- ifelse(Activity_data_filled$day_type %in% c("Saturday", "Sunday"),"weekend", "weekday")
 Activity_data_filled$day_type <-as.factor(Activity_data_filled$day_type)
 
-
 ##Aggegating by type of the day and time intervals
 mean_tsd_final <- aggregate(Activity_data_filled$steps,
                        by=list(Activity_data_filled$interval,
@@ -232,4 +218,4 @@ library(lattice)
 xyplot(steps ~ interval | day_type, data = mean_tsd_final, layout = c(1, 2), type="l", xlab = "Interval", ylab = "Number of steps")
 ```
 
-![](figures/unnamed-chunk-18-1.png)
+![](figures/unnamed-chunk-19-1.png)

@@ -123,9 +123,9 @@ names(mean_tsd_final) <- c("interval","day_type","steps")
 library(lattice)
 xyplot(steps ~ interval | day_type, data = mean_tsd_final, layout = c(1, 2), type="l", xlab = "Interval", ylab = "Number of steps")
 
-
+##Plotting the same plot in ggplot2
 library(ggplot2)
 p <- ggplot(mean_tsd_final, aes(x = interval, y = steps))
-p <- p + geom_line() + facet_grid(day_type ~ ., )
+p <- p + geom_line() + facet_grid(day_type ~ . , )
 p <- p + ggtitle("Activity patterns on weekends and weekdays")
 p + xlab("Interval") + ylab("Number of steps")

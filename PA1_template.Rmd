@@ -23,9 +23,18 @@ Dataset Available here:https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Fac
 * *interval*: Identifier for the 5-minute interval in which measurement was taken
 
 ## Loading and preprocessing the data
-```{r}
+```{r echo=FALSE}
 knitr::opts_chunk$set(fig.path='figures/')
 ```
+```{r results="hide"}
+##Above all we set language preferences to English (to weekday function can produce correct results) and save current settings
+## In order to save my russian environment
+curr_locale <- Sys.getlocale("LC_TIME")
+
+## To set it in english
+Sys.setlocale("LC_TIME","en_US.UTF-8")
+```
+
 ```{r}
 ##Unzipping file fromm the forked repository
 if(!file.exists('activity.csv')){
@@ -54,12 +63,12 @@ Mean_tsd2 <- mean(Total_steps_day, na.rm = TRUE)
 Median_tsd2 <- median(Total_steps_day,na.rm = TRUE)
 ```
 Mean is:
-```{r}
+```{r echo=FALSE}
 print(Mean_tsd2)
 ```
 
 Median is:
-```{r}
+```{r echo=FALSE}
 print(Median_tsd2)
 ```
 
@@ -108,15 +117,15 @@ max_steps_interval <- which.max(mean_steps)
 msi <- names(max_steps_interval)
 print(msi)
 ```
-Which means that tome interval "8:35" is interval with maximum steps taken on average.
+Which means that interval "8:35" is the interval with maximum steps taken on average.
 
 ## Imputing missing values
 ####1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 ```{r}
 mis_val <- sum(is.na(activity_data$steps))
 ```
-Totla number of NAs presented:
-```{r}
+Total number of NAs presented:
+```{r echo=FALSE}
 print(mis_val)
 ```
 
@@ -150,11 +159,11 @@ Mean_tsd_filled<- mean(Total_steps_day_filled)
 Median_tsd_filled <- median(Total_steps_day_filled)
 ```
 Mean of the dataset with filled NAs is:
-```{r}
+```{r echo=FALSE}
 print(Mean_tsd_filled)
 ```
 Median of the dataset with filled NAs is:
-```{r}
+```{r echo=FALSE}
 print(Median_tsd_filled)
 ```
 Mean is the same, cause we used meanvalue of the intervals to substitute NA's. 
@@ -170,7 +179,6 @@ Activity_data_filled$day_type <- weekdays(as.Date(Activity_data_filled$date))
 Activity_data_filled$day_type <- ifelse(Activity_data_filled$day_type %in% c("Saturday", "Sunday"),"weekend", "weekday")
 Activity_data_filled$day_type <-as.factor(Activity_data_filled$day_type)
 
-
 ##Aggegating by type of the day and time intervals
 mean_tsd_final <- aggregate(Activity_data_filled$steps,
                        by=list(Activity_data_filled$interval,
@@ -185,4 +193,5 @@ names(mean_tsd_final) <- c("interval","day_type","steps")
 ##Plotting results
 library(lattice)
 xyplot(steps ~ interval | day_type, data = mean_tsd_final, layout = c(1, 2), type="l", xlab = "Interval", ylab = "Number of steps")
+
 ```
